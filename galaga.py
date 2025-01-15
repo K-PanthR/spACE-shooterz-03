@@ -14,14 +14,16 @@ ship = Actor("galaga")
 ship.x = WIDTH//2
 ship.y = HEIGHT-50
 
-speed = 4
+speed = 6
+
+score=0
 
 bullets = []
 enemies = []
 
-enemies.append(Actor("bug"))
-enemies[-1].x=10
-enemies[-1].y=-100
+enemies.append(Actor("bug1"))
+enemies[-1].x = 10
+enemies[-1].y = -100
 
 def on_key_down(key):
     if key== keys.SPACE:
@@ -30,6 +32,7 @@ def on_key_down(key):
         bullets[-1].y = ship.y-50       
 
 def update():
+    global score
     if keyboard.left:
         ship.x  -= 4
         if ship.x<0:
@@ -38,23 +41,29 @@ def update():
         ship.x += 4
         if ship.x>WIDTH:
             ship.x = WIDTH//2
-    '''
-    for bullet in bullets:
-        if keyboard.space:
-            bullets[-1].x = ship.x
-            bullets[-1].y = ship.y
-    '''
     for bullet in bullets:
         if bullet.y <=0:
             bullets.remove(bullet)
         else:
             bullet.y -=10
+    for bug in enemies:
+        bug.y += 5
+        if bug.y >= HEIGHT:
+            bug.y = -100
+            bug.x = random.randint(50,WIDTH-50)
+    for bullet in bullets:
+        if bug.colliderect(bullet):
+            bullets.remove(bullet)
+            enemies.remove(bug)
+            score  += 100 
 
 def draw():
     screen.clear()
     screen.fill(BLUE)
     for bullet in bullets:
         bullet.draw()
+    for bug in enemies:
+        bug.draw()
     ship.draw()
 
 pgzrun.go()
